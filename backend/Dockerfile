@@ -1,0 +1,46 @@
+# Dockerfile
+FROM node:22-alpine
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ bash
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Bundle app source
+COPY . .
+
+# Create logs directory
+RUN mkdir -p logs
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["node", "src/server.js"]
+
+# Dockerfile.dev (for development)
+FROM node:22-alpine
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++ bash
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Install app dependencies
+COPY package*.json ./
+RUN npm install
+
+# Expose port
+EXPOSE 3000
+
+# Start with nodemon for hot reload
+CMD ["nodemon", "src/server.js"]

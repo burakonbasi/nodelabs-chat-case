@@ -5,7 +5,8 @@ import { validateRequest } from '../middlewares/validation.js';
 import {
   sendMessageValidator,
   conversationIdValidator,
-  messageQueryValidator
+  messageQueryValidator,
+  messageIdValidator
 } from '../validators/message.js';
 
 const router = Router();
@@ -29,7 +30,32 @@ router.get(
   messageController.getConversations
 );
 
+// Create conversation
+router.post(
+  '/conversations/create',
+  sendMessageValidator,
+  validateRequest,
+  messageController.createConversation
+);
+
 // Get messages in a conversation
+router.get(
+  '/conversations/:conversationId/messages',
+  conversationIdValidator,
+  messageQueryValidator,
+  validateRequest,
+  messageController.getMessages
+);
+
+// Delete conversation
+router.delete(
+  '/conversations/:conversationId',
+  conversationIdValidator,
+  validateRequest,
+  messageController.deleteConversation
+);
+
+// Update the old route to new format
 router.get(
   '/conversations/:conversationId',
   conversationIdValidator,
@@ -49,7 +75,15 @@ router.get(
 // Mark message as read
 router.patch(
   '/:messageId/read',
+  messageIdValidator,
+  validateRequest,
   messageController.markAsRead
+);
+
+// Get unread count
+router.get(
+  '/unread-count',
+  messageController.getUnreadCount
 );
 
 export default router;

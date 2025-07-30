@@ -7,14 +7,26 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "jest",
-    "lint": "eslint src/"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f",
+    "pm2:start": "pm2 start pm2.config.js",
+    "pm2:stop": "pm2 stop all",
+    "pm2:restart": "pm2 restart all",
+    "pm2:logs": "pm2 logs",
+    "setup": "npm install && docker-compose up -d"
   },
   "keywords": [],
   "author": "Burak Onbaşıoğlu",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^9.0.3",
+    "@elastic/elasticsearch": "^9.1.0",
     "@sentry/node": "^9.43.0",
     "amqplib": "^0.10.8",
     "bcryptjs": "^3.0.2",
@@ -34,9 +46,11 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@jest/globals": "^30.0.5",
     "@types/node": "^24.1.0",
     "eslint": "^9.32.0",
     "jest": "^30.0.5",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }

@@ -232,6 +232,40 @@ class MessageService {
     
     return message;
   }
+  
+  async deleteConversation(conversationId, userId) {
+    // Check if user is participant
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      participants: userId
+    });
+    
+    if (!conversation) {
+      throw new Error('Conversation not found');
+    }
+    
+    // Delete all messages in conversation
+    await Message.deleteMany({ conversationId });
+    
+    // Delete conversation
+    await Conversation.findByIdAndDelete(conversationId);
+    
+    logger.info(`Conversation ${conversationId} deleted by user ${userId}`);
+  }
+  
+  async getUnreadCount(userId) {
+    const conversations = await Conversation.find({
+      participants: userId
+    });
+    
+    let totalUnread = 0;
+    conversations.forEach(conv => {
+      const unread = conv.unreadCount.get(userId.toString()) || 0;
+      totalUnread += unread;
+    });
+    
+    return totalUnread;
+  }
 }
 
 export default new MessageService();

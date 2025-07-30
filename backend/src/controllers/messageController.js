@@ -1,4 +1,3 @@
-
 import messageService from '../services/messageService.js';
 
 export const sendMessage = async (req, res, next) => {
@@ -110,6 +109,58 @@ export const markAsRead = async (req, res, next) => {
       success: true,
       message: 'Message marked as read',
       data: { message }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createConversation = async (req, res, next) => {
+  try {
+    const { receiverId, content } = req.body;
+    const senderId = req.user._id;
+    
+    // Create first message with conversation
+    const result = await messageService.createMessage(
+      senderId,
+      receiverId,
+      content
+    );
+    
+    res.status(201).json({
+      success: true,
+      message: 'Conversation created successfully',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteConversation = async (req, res, next) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user._id;
+    
+    await messageService.deleteConversation(conversationId, userId);
+    
+    res.json({
+      success: true,
+      message: 'Conversation deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUnreadCount = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const count = await messageService.getUnreadCount(userId);
+    
+    res.json({
+      success: true,
+      data: { unreadCount: count }
     });
   } catch (error) {
     next(error);

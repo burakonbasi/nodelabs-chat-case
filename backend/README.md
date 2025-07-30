@@ -1,210 +1,271 @@
-# Nodelabs Chat Case - Real-time Messaging System
+# Nodelabs Sohbet Uygulaması - Gerçek Zamanlı Mesajlaşma Sistemi
 
-A scalable, secure, and performant real-time messaging backend built with Node.js v22, featuring automatic message scheduling, real-time communication, and comprehensive monitoring.
+Node.js v22 ile geliştirilmiş, otomatik mesaj planlama, gerçek zamanlı iletişim ve kapsamlı izleme özellikleri sunan ölçeklenebilir, güvenli ve yüksek performanslı bir gerçek zamanlı mesajlaşma arka ucu.
 
-## 🚀 Features
+## 🚀 Özellikler
 
-- **Real-time Messaging**: Socket.IO powered instant messaging
-- **Authentication**: JWT-based auth with refresh tokens
-- **Auto Messaging**: Cron-based automatic message scheduling
-- **Message Queue**: RabbitMQ for reliable message delivery
-- **Search**: Elasticsearch integration for message search
-- **Caching**: Redis for online status and performance
-- **Monitoring**: Sentry error tracking and Winston logging
-- **API Docs**: Swagger/OpenAPI documentation
-- **Security**: Helmet, CORS, rate limiting, input validation
+- **Gerçek Zamanlı Mesajlaşma**: Socket.IO destekli anlık mesajlaşma
+- **Kimlik Doğrulama**: Yenileme tokenlı JWT tabanlı kimlik doğrulama
+- **Otomatik Mesajlaşma**: Cron tabanlı otomatik mesaj planlama
+- **Mesaj Kuyruğu**: Güvenilir mesaj iletimi için RabbitMQ
+- **Arama**: Mesaj araması için Elasticsearch entegrasyonu
+- **Önbellek**: Çevrimiçi durum ve performans için Redis
+- **İzleme**: Sentry hata takibi ve Winston loglama
+- **API Belgeleri**: Swagger/OpenAPI dokümantasyonu
+- **Güvenlik**: Helmet, CORS, hız sınırlama, girdi doğrulama
 
-## 📋 Prerequisites
+## 📋 Ön Gereksinimler
 
 - Node.js v22+
 - MongoDB
 - Redis
 - RabbitMQ
-- Elasticsearch (optional)
-- Sentry account (optional)
+- Elasticsearch (isteğe bağlı)
+- Sentry hesabı (isteğe bağlı)
 
-## 🛠️ Installation
+## 🛠️ Kurulum
 
-1. Clone the repository:
+1. Depoyu klonlayın:
 ```bash
 git clone https://github.com/burakonbasi/nodelabs-chat-case.git
 cd nodelabs-chat-case
 ```
 
-2. Install dependencies:
+2. Bağımlılıkları yükleyin:
 ```bash
 npm install
 ```
 
-3. Copy environment variables:
+3. Ortam değişkenlerini kopyalayın:
 ```bash
 cp .env.example .env
 ```
 
-4. Update `.env` with your configuration
+4. `.env` dosyasını kendi yapılandırmanızla güncelleyin
 
-5. Start services (MongoDB, Redis, RabbitMQ):
+5. Servisleri başlatın (MongoDB, Redis, RabbitMQ):
 ```bash
-# Using Docker Compose (optional)
-docker-compose up -d mongodb redis rabbitmq
+# Docker Compose kullanarak (isteğe bağlı)
+docker-compose up -d mongodb redis rabbitmq Elasticsearch
+# Sadece servisler için Docker kullanarak
+docker run -d -p 27017:27017 --name mongodb mongo
+docker run -d -p 6379:6379 --name redis redis
+docker run -d -p 5672:5672 -p 15672:15672 --name rabbitmq rabbitmq:management
+
+# veya
+docker-compose up -d
+# veya
+make docker-up
+# Servis sağlığını kontrol edin:
+docker-compose ps
+# Günlükleri görüntüleyin:
+docker-compose logs -f app
 ```
 
-6. Run the application:
+6. Uygulamayı çalıştırın:
 ```bash
-# Development
+# Geliştirme
 npm run dev
 
-# Production
+# Üretim
 npm start
 ```
 
-## 🏗️ Project Structure
+## 🏗️ Proje Yapısı
 
 ```
 src/
-├── config/         # Configuration files
-├── controllers/    # Route controllers
-├── cron/          # Scheduled jobs
-├── middlewares/   # Express middlewares
-├── models/        # MongoDB models
-├── queues/        # RabbitMQ consumers/producers
-├── routes/        # API routes
-├── services/      # Business logic
-├── sockets/       # Socket.IO handlers
-├── swagger/       # API documentation
-├── utils/         # Utility functions
-├── validators/    # Input validators
-├── app.js         # Express app setup
-└── server.js      # Server initialization
+├── config/         # Yapılandırma dosyaları
+├── controllers/    # Rota kontrolcüleri
+├── cron/          # Zamanlanmış görevler
+├── middlewares/   # Express ara yazılımları
+├── models/        # MongoDB modelleri
+├── queues/        # RabbitMQ tüketicileri/üreticileri
+├── routes/        # API rotaları
+├── services/      # İş mantığı
+├── sockets/       # Socket.IO işleyicileri
+├── swagger/       # API dokümantasyonu
+├── utils/         # Yardımcı fonksiyonlar
+├── validators/    # Girdi doğrulayıcıları
+├── app.js         # Express uygulama kurulumu
+└── server.js      # Sunucu başlatma
 ```
 
-## 📡 API Endpoints
+## 📡 API Uç Noktaları
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/refresh` - Refresh access token
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/me` - Get current user
+### Kimlik Doğrulama
+- `POST /api/auth/register` - Yeni kullanıcı kaydı
+- `POST /api/auth/login` - Kullanıcı girişi
+- `POST /api/auth/refresh` - Erişim tokenini yenile
+- `POST /api/auth/logout` - Kullanıcı çıkışı
+- `GET /api/auth/me` - Mevcut kullanıcıyı al
 
-### Users
-- `GET /api/user/list` - List all users
-- `GET /api/user/online` - Get online users
-- `GET /api/user/online/:userId` - Check user online status
+### Kullanıcılar
+- `GET /api/user/list` - Tüm kullanıcıları listele
+- `GET /api/user/online` - Çevrimiçi kullanıcıları al
+- `GET /api/user/online/:userId` - Kullanıcı çevrimiçi durumunu kontrol et
 
-### Messages
-- `POST /api/messages/send` - Send message
-- `GET /api/messages/conversations` - Get conversations
-- `GET /api/messages/conversations/:id` - Get messages
-- `GET /api/messages/search` - Search messages
-- `PATCH /api/messages/:id/read` - Mark as read
+### Mesajlar
+- `POST /api/messages/send` - Mesaj gönder
+- `GET /api/messages/conversations` - Konuşmaları al
+- `GET /api/messages/conversations/:id` - Mesajları al
+- `GET /api/messages/search` - Mesaj ara
+- `PATCH /api/messages/:id/read` - Okundu olarak işaretle
 
-## 🔌 Socket.IO Events
+## 🔌 Socket.IO Olayları
 
-### Client to Server
-- `connection` - Authenticate with JWT
-- `join_room` - Join conversation room
-- `send_message` - Send real-time message
-- `typing_start` - Start typing indicator
-- `typing_stop` - Stop typing indicator
+### İstemciden Sunucuya
+- `connection` - JWT ile kimlik doğrulama
+- `join_room` - Konuşma odasına katıl
+- `send_message` - Gerçek zamanlı mesaj gönder
+- `typing_start` - Yazma göstergesini başlat
+- `typing_stop` - Yazma göstergesini durdur
 
-### Server to Client
-- `message_received` - New message notification
-- `message_sent` - Message sent confirmation
-- `user_online` - User came online
-- `user_offline` - User went offline
-- `user_typing` - User is typing
-- `error` - Error notification
+### Sunucudan İstemciye
+- `message_received` - Yeni mesaj bildirimi
+- `message_sent` - Mesaj gönderildi onayı
+- `user_online` - Kullanıcı çevrimiçi oldu
+- `user_offline` - Kullanıcı çevrimdışı oldu
+- `user_typing` - Kullanıcı yazıyor
+- `error` - Hata bildirimi
 
-## ⚙️ Automatic Message System
+## ⚙️ Otomatik Mesaj Sistemi
 
-The system includes three automated processes:
+Sistem üç otomatik süreç içerir:
 
-1. **Message Planner (02:00 daily)**
-   - Shuffles active users
-   - Creates random user pairs
-   - Schedules messages for next 24h
+1. **Mesaj Planlayıcı (Her gün 02:00)**
+   - Aktif kullanıcıları karıştırır
+   - Rastgele kullanıcı çiftleri oluşturur
+   - Sonraki 24 saat için mesajları planlar
 
-2. **Message Queuer (Every minute)**
-   - Finds due messages
-   - Adds to RabbitMQ queue
-   - Marks as queued
+2. **Mesaj Kuyruğa Alıcı (Her dakika)**
+   - Vadesi gelen mesajları bulur
+   - RabbitMQ kuyruğuna ekler
+   - Kuyruğa alındı olarak işaretler
 
-3. **Message Consumer (Continuous)**
-   - Processes queue messages
-   - Creates actual messages
-   - Sends via Socket.IO
+3. **Mesaj Tüketici (Sürekli)**
+   - Kuyruk mesajlarını işler
+   - Gerçek mesajları oluşturur
+   - Socket.IO ile gönderir
 
-## 🔒 Security Features
+## 🔒 Güvenlik Özellikleri
 
-- JWT authentication with refresh tokens
-- Password hashing with bcrypt
-- Rate limiting on auth endpoints
-- Input validation and sanitization
-- Helmet.js security headers
-- CORS configuration
-- MongoDB injection prevention
+- Refresh tokenlı JWT kimlik doğrulama
+- bcrypt ile şifre hashleme
+- Kimlik doğrulama uç noktalarında hız sınırlama
+- Girdi doğrulama ve temizleme
+- Helmet.js güvenlik başlıkları
+- CORS yapılandırması
+- MongoDB enjeksiyon önleme
 
-## 📊 Monitoring & Logging
+## 📊 İzleme ve Günlük Tutma
 
-- **Winston**: File and console logging
-- **Sentry**: Error tracking and monitoring
-- **Morgan**: HTTP request logging
-- **Custom**: Application-level logging
+- **Winston**: Dosya ve konsol günlük tutma
+- **Sentry**: Hata takibi ve izleme
+- **Morgan**: HTTP istek günlük tutma
+- **Özel**: Uygulama seviyesi günlük tutma
 
-## 🧪 Testing
+## 🧪 Test
 
 ```bash
-# Run tests
+# Testleri çalıştır
 npm test
 
-# Run with coverage
+# Kapsama ile çalıştır
 npm run test:coverage
+
+# İzleme modunda çalıştır
+npm run test:watch
 ```
 
-## 📚 API Documentation
+## 🐳 Docker Komutları
+```bash
+# Tüm servisleri derle ve başlat
+docker-compose up -d --build
 
-Access Swagger documentation at:
+# Logs görüntüle
+docker-compose logs -f [service-name]
+
+# Tüm servisleri durdur
+docker-compose down
+
+# Durdur ve veri birimlerini kaldır
+docker-compose down -v
+
+# Uygulama konteynerine eriş
+docker-compose exec app sh
+
+# Servis durumunu görüntüle
+docker-compose ps
+
+# Bir servisi yeniden başlat
+docker-compose restart [service-name]
+```
+
+## 🛠️ Faydalı Make Komutları
+```bash
+# Tüm komutları göster
+make help
+
+# Tam geliştirme kurulumu
+make setup-dev
+
+# Geliştirmeyi başlat
+make dev
+
+# Testleri çalıştır
+make test
+
+# Docker işlemleri
+make docker-up
+make docker-down
+make docker-logs
+make docker-shell
+```
+
+## 📚 API Dokümantasyonu
+
+Swagger dokümantasyonuna şu adresten erişin:
 ```
 http://localhost:3000/api-docs
 ```
 
-## 🚀 Deployment
+## 🚀 Dağıtım
 
-1. Set production environment variables
-2. Build the application (if needed)
-3. Use PM2 or similar process manager:
+1. Üretim ortam değişkenlerini ayarlayın
+2. Uygulamayı derleyin (gerekirse)
+3. PM2 veya benzeri bir süreç yöneticisi kullanın:
 
 ```bash
-# Install PM2
+# PM2'yi yükleyin
 npm install -g pm2
 
-# Start application
+# Uygulamayı başlatın
 pm2 start src/server.js --name nodelabs-chat
 
-# Save PM2 configuration
+# PM2 yapılandırmasını kaydedin
 pm2 save
 pm2 startup
 ```
 
-## 🤝 Contributing
+## 🤝 Katkıda Bulunma
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing`)
-5. Open a Pull Request
+1. Depoyu fork edin
+2. Özellik dalı oluşturun (`git checkout -b feature/amazing`)
+3. Değişiklikleri commit edin (`git commit -m 'Harika özellik eklendi'`)
+4. Dalı push edin (`git push origin feature/amazing`)
+5. Pull Request açın
 
-## 📄 License
+## 📄 Lisans
 
-This project is licensed under the MIT License.
+Bu proje MIT Lisansı altında lisanslanmıştır.
 
-## 👥 Authors
+## 👥 Yazar
 
-- Your Name - Initial work
+- Burak Onbaşıoğlu
 
-## 🙏 Acknowledgments
+## 🙏 Teşekkürler
 
-- Node.js community
-- All contributors
-- Open source packages used
+- Node.js topluluğu
+- Tüm katkıda bulunanlar
+- Kullanılan açık kaynak paketler

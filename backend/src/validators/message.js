@@ -1,4 +1,3 @@
-
 import { body, param, query } from 'express-validator';
 import mongoose from 'mongoose';
 
@@ -29,4 +28,11 @@ export const messageQueryValidator = [
   query('limit')
     .optional()
     .isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100')
+];
+
+export const messageIdValidator = [
+  param('messageId')
+    .notEmpty().withMessage('Message ID is required')
+    .custom(value => mongoose.Types.ObjectId.isValid(value))
+    .withMessage('Invalid message ID')
 ];
