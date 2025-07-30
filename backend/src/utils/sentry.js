@@ -1,4 +1,3 @@
-
 import * as Sentry from '@sentry/node';
 import config from '../config/index.js';
 import logger from './logger.js';
@@ -20,5 +19,12 @@ const initSentry = (app) => {
   }
 };
 
-export { Sentry, initSentry };
+// Create dummy handlers when Sentry is not configured
+const dummyMiddleware = (req, res, next) => next();
 
+const SentryHandlers = config.sentry.dsn ? Sentry.Handlers : {
+  requestHandler: () => dummyMiddleware,
+  errorHandler: () => dummyMiddleware
+};
+
+export { Sentry, SentryHandlers, initSentry };

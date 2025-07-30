@@ -1,0 +1,295 @@
+{
+    "info": {
+      "name": "Nodelabs Chat API",
+      "description": "Real-time messaging system API collection",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Register",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "register"]
+              }
+            }
+          },
+          {
+            "name": "Login",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "login"]
+              }
+            }
+          },
+          {
+            "name": "Get Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/me",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "me"]
+              }
+            }
+          },
+          {
+            "name": "Refresh Token",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/refresh",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "refresh"]
+              }
+            }
+          },
+          {
+            "name": "Logout",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/logout",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "logout"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Users",
+        "item": [
+          {
+            "name": "Get Users List",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/user/list?page=1&limit=20",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "user", "list"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Get Online Users",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/user/online",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "user", "online"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Messages",
+        "item": [
+          {
+            "name": "Send Message",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n  \"receiverId\": \"{{receiverId}}\",\n  \"content\": \"Hello, how are you?\"\n}"
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/messages/send",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "messages", "send"]
+              }
+            }
+          },
+          {
+            "name": "Get Conversations",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/messages/conversations",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "messages", "conversations"]
+              }
+            }
+          },
+          {
+            "name": "Get Messages",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/messages/conversations/{{conversationId}}/messages?page=1&limit=50",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "messages", "conversations", "{{conversationId}}", "messages"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "50"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "Search Messages",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{accessToken}}"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/messages/search?q=hello",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "messages", "search"],
+                "query": [
+                  {
+                    "key": "q",
+                    "value": "hello"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Health",
+        "request": {
+          "method": "GET",
+          "url": {
+            "raw": "{{baseUrl}}/api/health",
+            "host": ["{{baseUrl}}"],
+            "path": ["api", "health"]
+          }
+        }
+      }
+    ],
+    "variable": [
+      {
+        "key": "baseUrl",
+        "value": "http://localhost:3000",
+        "type": "string"
+      },
+      {
+        "key": "accessToken",
+        "value": "",
+        "type": "string"
+      },
+      {
+        "key": "refreshToken",
+        "value": "",
+        "type": "string"
+      },
+      {
+        "key": "receiverId",
+        "value": "",
+        "type": "string"
+      },
+      {
+        "key": "conversationId",
+        "value": "",
+        "type": "string"
+      }
+    ]
+  }

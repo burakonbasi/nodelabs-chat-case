@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { Sentry, initSentry } from './utils/sentry.js';
+import { Sentry, SentryHandlers, initSentry } from './utils/sentry.js';
 import { generalLimiter } from './middlewares/rateLimiter.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import routes from './routes/index.js';
@@ -17,7 +17,7 @@ initSentry(app);
 app.set('trust proxy', 1);
 
 // Sentry request handler
-app.use(Sentry.Handlers.requestHandler());
+app.use(SentryHandlers.requestHandler());
 
 // Security middleware
 app.use(helmet());
@@ -59,7 +59,7 @@ app.use((req, res) => {
 });
 
 // Sentry error handler
-app.use(Sentry.Handlers.errorHandler());
+app.use(SentryHandlers.errorHandler());
 
 // Error handling middleware
 app.use(errorHandler);
