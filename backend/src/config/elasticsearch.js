@@ -2,10 +2,16 @@ import { Client } from '@elastic/elasticsearch';
 import config from './index.js';
 import logger from '../utils/logger.js';
 
-let elasticClient;
+let elasticClient = null;
 
 const connectElasticsearch = async () => {
   try {
+    // Elasticsearch opsiyonel - yoksa devam et
+    if (!config.elasticsearch.node) {
+      logger.info('Elasticsearch URL not provided, search will use MongoDB');
+      return null;
+    }
+
     elasticClient = new Client({
       node: config.elasticsearch.node,
       auth: config.elasticsearch.auth.username ? {
@@ -41,6 +47,7 @@ const connectElasticsearch = async () => {
     return elasticClient;
   } catch (error) {
     logger.warn('Elasticsearch connection failed (non-critical):', error.message);
+    logger.info('Search functionality will use MongoDB instead');
     return null;
   }
 };
