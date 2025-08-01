@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Conversation, Message, User } from '@/types';
+import { Conversation, Message } from '@/types';
 import api from '@/lib/api';
 import { socketManager } from '@/lib/socket';
 

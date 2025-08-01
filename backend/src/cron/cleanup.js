@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import AutoMessage from '../models/AutoMessage.js';
 import logger from '../utils/logger.js';
+import config from '../config/index.js';
 
 // Run daily at 03:00
 export const startCleanupJob = () => {
@@ -8,7 +9,7 @@ export const startCleanupJob = () => {
     try {
       logger.info('Starting cleanup cron job...');
       
-      // Delete old sent auto messages (older than 7 days)
+      // Eski gönderilen otomatik mesajları sil (7 günden eski)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       

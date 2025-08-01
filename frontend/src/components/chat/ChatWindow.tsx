@@ -5,7 +5,7 @@ import { useChatStore } from '@/stores/chatStore';
 import { useAuthStore } from '@/stores/authStore';
 import { MessageList } from './MessageList';
 import { TypingIndicator } from './TypingIndicator';
-import { cn, getInitials, debounce } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
 import { socketManager } from '@/lib/socket';
 import { MessageForm } from '@/types';
 

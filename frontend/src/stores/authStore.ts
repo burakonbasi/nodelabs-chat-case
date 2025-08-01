@@ -66,7 +66,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       
       set({ user, isAuthenticated: true });
       socketManager.connect();
-    } catch (error) {
+    } catch {
       tokenManager.clearTokens();
       set({ user: null, isAuthenticated: false });
     } finally {

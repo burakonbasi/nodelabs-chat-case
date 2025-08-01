@@ -41,7 +41,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiResponse>) => {
-    const originalRequest = error.config as any;
+    const originalRequest = error.config as { _retry?: boolean; headers?: Record<string, string> };
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;

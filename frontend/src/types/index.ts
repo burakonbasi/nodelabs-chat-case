@@ -40,11 +40,11 @@ export interface User {
     };
   }
   
-  export interface ApiResponse<T = any> {
+  export interface ApiResponse<T = unknown> {
     success: boolean;
     message?: string;
     data?: T;
-    errors?: any[];
+    errors?: unknown[];
   }
   
   export interface PaginationData {

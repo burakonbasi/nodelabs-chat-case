@@ -4,7 +4,7 @@ import { tokenManager } from './api';
 
 class SocketManager {
   private socket: Socket<SocketEvents> | null = null;
-  private listeners: Map<string, Function[]> = new Map();
+  private listeners: Map<string, Array<(...args: unknown[]) => void>> = new Map();
 
   connect() {
     if (this.socket?.connected) return;
@@ -54,21 +54,21 @@ class SocketManager {
 
   on<K extends keyof SocketEvents>(event: K, callback: SocketEvents[K]) {
     if (!this.socket) return;
-    this.socket.on(event as any, callback as any);
+    this.socket.on(event, callback as (...args: unknown[]) => void);
   }
 
   off<K extends keyof SocketEvents>(event: K, callback?: SocketEvents[K]) {
     if (!this.socket) return;
     if (callback) {
-      this.socket.off(event as any, callback as any);
+      this.socket.off(event, callback as (...args: unknown[]) => void);
     } else {
-      this.socket.off(event as any);
+      this.socket.off(event);
     }
   }
 
   emit<K extends keyof SocketEvents>(event: K, ...args: Parameters<SocketEvents[K]>) {
     if (!this.socket) return;
-    this.socket.emit(event as any, ...args);
+    this.socket.emit(event, ...args);
   }
 
   joinRoom(conversationId: string) {
