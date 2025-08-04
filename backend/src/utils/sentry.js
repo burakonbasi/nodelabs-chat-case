@@ -7,10 +7,6 @@ const initSentry = (app) => {
     Sentry.init({
       dsn: config.sentry.dsn,
       environment: config.env,
-      integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Sentry.Integrations.Express({ app })
-      ],
       tracesSampleRate: 1.0
     });
     logger.info('Sentry initialized successfully');
@@ -22,7 +18,10 @@ const initSentry = (app) => {
 // Create dummy handlers when Sentry is not configured
 const dummyMiddleware = (req, res, next) => next();
 
-const SentryHandlers = config.sentry.dsn ? Sentry.Handlers : {
+const SentryHandlers = config.sentry.dsn ? {
+  requestHandler: () => dummyMiddleware,
+  errorHandler: () => dummyMiddleware
+} : {
   requestHandler: () => dummyMiddleware,
   errorHandler: () => dummyMiddleware
 };

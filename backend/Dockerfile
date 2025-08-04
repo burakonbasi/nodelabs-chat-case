@@ -1,24 +1,23 @@
 # Dockerfile
 FROM node:22-alpine
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++ bash
+# Install dependencies for wait script
+RUN apk add --no-cache bash
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Add wait script
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /wait
+RUN chmod +x /wait
+
 COPY package*.json ./
 RUN npm ci --only=production
 
-# Bundle app source
 COPY . .
 
-# Create logs directory
 RUN mkdir -p logs
 
-# Expose port
 EXPOSE 3000
 
-# Start the application
-CMD ["node", "src/server.js"]
+# Wait for services then start
+CMD /wait && node src/server.js
