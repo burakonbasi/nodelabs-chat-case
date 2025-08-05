@@ -6,6 +6,24 @@ import logger from '../utils/logger.js';
 export const handleConnection = (io) => {
   return async (socket) => {
     const userId = socket.userId;
+    
+    // Disconnect any existing connections for this user
+    const sockets = await io.fetchSockets();
+    for (const existingSocket of sockets) {
+      if (existingSocket.userId === userId && existingSocket.id !== socket.id) {
+        logger.info(`Disconnecting duplicate connection for user ${userId}`);
+        existingSocket.disconnect();
+      }
+    }
+    
+    // Store user's socket ID to prevent duplicates
+    socket.userId = userId;
+    
+    // Join user's personal room (only once)
+    if (!socket.rooms.has(userId)) {
+      socket.join(userId);
+    }
+    
     logger.info(`User ${userId} connected`);
     
     // Set user online
@@ -46,16 +64,15 @@ export const handleConnection = (io) => {
           conversationId: result.conversationId
         });
         
-        // Emit to receiver
-        io.to(receiverId).emit('message_received', {
-          message: result.message,
-          conversationId: result.conversationId
-        });
+        // Emit to receiver (only if different from sender)
+        if (receiverId !== userId) {
+          io.to(receiverId).emit('message_received', {
+            message: result.message,
+            conversationId: result.conversationId
+          });
+        }
         
-        // Also emit to conversation room
-        socket.to(result.conversationId.toString()).emit('new_message', {
-          message: result.message
-        });
+        logger.info(`Message sent: ${result.message._id} from ${userId} to ${receiverId}`);
         
       } catch (error) {
         logger.error('Error sending message:', error);

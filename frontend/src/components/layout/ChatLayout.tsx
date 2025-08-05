@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiSun, FiMoon, FiSettings, FiSearch, FiPlus } from 'react-icons/fi';
+import { FiMenu, FiX, FiSun, FiMoon, FiSettings, FiSearch, FiPlus, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { useUIStore } from '@/stores/uiStore';
 import { useThemeStore } from '@/stores/themeStore';
 import { useAuthStore } from '@/stores/authStore';
 import { ConversationList } from '@/components/chat/ConversationList';
+import { UserList } from '@/components/chat/UserList';
 import { ChatWindow } from '@/components/chat/ChatWindow';
 import { UserProfile } from '@/components/user/UserProfile';
 import { SearchModal } from '@/components/chat/SearchModal';
@@ -20,6 +21,7 @@ export function ChatLayout() {
   const [showSearch, setShowSearch] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [activeTab, setActiveTab] = useState<'conversations' | 'users'>('conversations');
 
   useEffect(() => {
     initTheme();
@@ -81,7 +83,7 @@ export function ChatLayout() {
                         {user?.username.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Messages</h2>
+                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Chat</h2>
                   </div>
                   
                   <div className="flex items-center gap-1">
@@ -115,9 +117,62 @@ export function ChatLayout() {
                     </button>
                   </div>
                 </div>
+
+                {/* Tab Navigation */}
+                <div className="flex bg-gray-100 dark:bg-dark-300 rounded-lg p-1">
+                  <button
+                    onClick={() => setActiveTab('conversations')}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      activeTab === 'conversations'
+                        ? "bg-white dark:bg-dark-400 text-primary-600 dark:text-primary-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    )}
+                  >
+                    <FiMessageCircle className="w-4 h-4" />
+                    Conversations
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('users')}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                      activeTab === 'users'
+                        ? "bg-white dark:bg-dark-400 text-primary-600 dark:text-primary-400 shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    )}
+                  >
+                    <FiUsers className="w-4 h-4" />
+                    Users
+                  </button>
+                </div>
               </div>
 
-              <ConversationList />
+              {/* Tab Content */}
+              <AnimatePresence mode="wait">
+                {activeTab === 'conversations' ? (
+                  <motion.div
+                    key="conversations"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="h-full"
+                  >
+                    <ConversationList />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="users"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="h-full"
+                  >
+                    <UserList />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.aside>
 
             {/* Mobile overlay */}

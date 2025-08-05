@@ -59,17 +59,23 @@ class AuthService {
   }
   
   async login(email, password) {
+    logger.info(`Login attempt for email: ${email}`);
+    
     // Find user with password
     const user = await User.findOne({ email }).select('+password +refreshToken');
     
     if (!user) {
+      logger.warn(`Login failed: User not found for email: ${email}`);
       throw new Error('Invalid credentials');
     }
+    
+    logger.info(`User found: ${user.username}`);
     
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     
     if (!isPasswordValid) {
+      logger.warn(`Login failed: Invalid password for user: ${user.username}`);
       throw new Error('Invalid credentials');
     }
     

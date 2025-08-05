@@ -77,7 +77,23 @@ export function ConversationList() {
 
     const isActive = activeConversation?._id === conversation._id;
     const isOnline = onlineUsers.has(otherUser._id);
-    const unreadCount = user ? conversation.unreadCount?.get(user._id) || 0 : 0;
+    
+    // unreadCount'u güvenli şekilde kontrol et
+    let unreadCount = 0;
+    if (user && conversation.unreadCount) {
+      if (typeof conversation.unreadCount === 'object' && conversation.unreadCount !== null) {
+        // Map veya obje olabilir
+        if (conversation.unreadCount instanceof Map) {
+          unreadCount = conversation.unreadCount.get(user._id) || 0;
+        } else {
+          // Obje olarak kontrol et
+          unreadCount = (conversation.unreadCount as any)[user._id] || 0;
+        }
+      } else if (typeof conversation.unreadCount === 'number') {
+        unreadCount = conversation.unreadCount;
+      }
+    }
+    
     const isTyping = typingUsers.get(conversation._id)?.has(otherUser._id) || false;
 
     return (

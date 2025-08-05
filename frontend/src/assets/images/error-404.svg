@@ -1,0 +1,39 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="200" cy="150" r="100" fill="#FEE2E2" opacity="0.5"/>
+  
+  <!-- 404 Text -->
+  <text x="200" y="140" font-family="Arial, sans-serif" font-size="72" font-weight="bold" text-anchor="middle" fill="#DC2626">404</text>
+  
+  <!-- Error message -->
+  <text x="200" y="170" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#7F1D1D">Page not found</text>
+  
+  <!-- Broken link icon -->
+  <g transform="translate(200, 200)">
+    <!-- Left chain -->
+    <path d="M-30 0 Q-20 -10 -10 0" stroke="#DC2626" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="-30" cy="0" r="8" stroke="#DC2626" stroke-width="3" fill="none"/>
+    
+    <!-- Break in the middle -->
+    <line x1="-8" y1="-2" x2="-2" y2="2" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 2"/>
+    <line x1="2" y1="-2" x2="8" y2="2" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 2"/>
+    
+    <!-- Right chain -->
+    <path d="M10 0 Q20 -10 30 0" stroke="#DC2626" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="30" cy="0" r="8" stroke="#DC2626" stroke-width="3" fill="none"/>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="50" cy="50" r="4" fill="#FCA5A5"/>
+  <circle cx="350" cy="60" r="3" fill="#FBBF24"/>
+  <circle cx="340" cy="250" r="5" fill="#A78BFA"/>
+  <circle cx="60" cy="240" r="3" fill="#60A5FA"/>
+  
+  <!-- Question marks -->
+  <text x="80" y="150" font-family="Arial, sans-serif" font-size="24" fill="#FCA5A5" opacity="0.6">?</text>
+  <text x="320" y="140" font-family="Arial, sans-serif" font-size="20" fill="#F87171" opacity="0.5">?</text>
+  
+  <!-- Small floating elements -->
+  <rect x="100" y="80" width="15" height="15" rx="2" fill="#FEE2E2" transform="rotate(45 107.5 87.5)"/>
+  <rect x="280" y="90" width="12" height="12" rx="2" fill="#FECACA" transform="rotate(30 286 96)"/>
+</svg>

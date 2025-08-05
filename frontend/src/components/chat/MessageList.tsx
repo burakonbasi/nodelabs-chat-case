@@ -112,7 +112,7 @@ export function MessageList({ onMessageReceived }: MessageListProps) {
 
     return (
       <div
-        key={message._id}
+        key={`${message._id}-${virtualRow.index}-${message.createdAt}`}
         style={{
           position: 'absolute',
           top: 0,

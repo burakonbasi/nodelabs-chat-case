@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Conversation, Message, Reaction } from '../types';
+import type { Conversation, Message, Reaction, User } from '../types';
 import api from '../lib/api';
 import { socketManager } from '../lib/socket';
 
@@ -11,10 +11,13 @@ interface ChatState {
   typingUsers: Map<string, Set<string>>; // conversationId -> Set of userIds
   isLoading: boolean;
   isLoadingMessages: boolean;
+  users: User[]; // Yeni eklenen kullanıcı listesi
+  isLoadingUsers: boolean; // Yeni eklenen loading state
   
   // Actions
   fetchConversations: () => Promise<void>;
   fetchMessages: (conversationId: string) => Promise<void>;
+  fetchUsers: () => Promise<void>; // Yeni eklenen fonksiyon
   setActiveConversation: (conversation: Conversation | null) => void;
   sendMessage: (receiverId: string, content: string) => Promise<void>;
   addMessage: (message: Message, conversationId: string) => void;
@@ -34,16 +37,53 @@ interface ChatState {
   fetchOlderMessages: (conversationId: string) => Promise<void>;
   updateMessage: (messageId: string, content: string) => Promise<void>;
   deleteMessage: (messageId: string) => Promise<void>;
+  createConversation: (receiverId: string, initialMessage: string) => Promise<Conversation>;
 }
 
-export const useChatStore = create<ChatState>((set, get) => ({
-  conversations: [],
-  activeConversation: null,
-  messages: [],
-  onlineUsers: new Set(),
-  typingUsers: new Map(),
-  isLoading: false,
-  isLoadingMessages: false,
+export const useChatStore = create<ChatState>((set, get) => {
+  // Socket event listeners
+  socketManager.on('message_sent', (data: any) => {
+    const { message, conversationId } = data;
+    console.log('Message sent event:', message, conversationId);
+    // Don't add message again if it's already in local state
+    const state = get();
+    const messageExists = state.messages.some(m => m._id === message._id);
+    if (!messageExists) {
+      get().addMessage(message, conversationId);
+    }
+  });
+
+  socketManager.on('message_received', (data: any) => {
+    const { message, conversationId } = data;
+    console.log('Message received event:', message, conversationId);
+    // Don't add message again if it's already in local state
+    const state = get();
+    const messageExists = state.messages.some(m => m._id === message._id);
+    if (!messageExists) {
+      get().addMessage(message, conversationId);
+    }
+  });
+
+  socketManager.on('user_online', (data: any) => {
+    const { userId } = data;
+    get().setUserOnline(userId);
+  });
+
+  socketManager.on('user_offline', (data: any) => {
+    const { userId } = data;
+    get().setUserOffline(userId);
+  });
+
+  return {
+    conversations: [],
+    activeConversation: null,
+    messages: [],
+    onlineUsers: new Set(),
+    typingUsers: new Map(),
+    isLoading: false,
+    isLoadingMessages: false,
+    users: [], // Yeni eklenen
+    isLoadingUsers: false, // Yeni eklenen
 
   fetchConversations: async () => {
     set({ isLoading: true });
@@ -54,6 +94,38 @@ export const useChatStore = create<ChatState>((set, get) => ({
       console.error('Error fetching conversations:', error);
     } finally {
       set({ isLoading: false });
+    }
+  },
+
+  fetchUsers: async () => {
+    set({ isLoadingUsers: true });
+    try {
+      const response = await api.get('/user/list');
+      set({ users: response.data.data.users });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      set({ isLoadingUsers: false });
+    }
+  },
+
+  createConversation: async (receiverId: string, initialMessage: string) => {
+    try {
+      const response = await api.post('/messages/conversations/create', {
+        receiverId,
+        content: initialMessage
+      });
+      
+      // Yeni conversation'ı listeye ekle
+      const newConversation = response.data.data.conversation;
+      set((state) => ({
+        conversations: [newConversation, ...state.conversations]
+      }));
+      
+      return newConversation;
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      throw error;
     }
   },
 
@@ -80,12 +152,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   sendMessage: async (receiverId, content) => {
-    // Send via socket for real-time delivery
-    socketManager.sendMessage(receiverId, content);
-    
-    // Also send via API for persistence
     try {
-      await api.post('/messages/send', { receiverId, content });
+      // Send via API for persistence only
+      const response = await api.post('/messages/send', { receiverId, content });
+      
+      // Add message to local state immediately
+      const message = response.data.data.message;
+      const conversationId = response.data.data.conversationId;
+      get().addMessage(message, conversationId);
     } catch (error) {
       console.error('Error sending message:', error);
       throw error;
@@ -291,4 +365,5 @@ export const useChatStore = create<ChatState>((set, get) => ({
       throw error;
     }
   },
-}));
+  };
+});

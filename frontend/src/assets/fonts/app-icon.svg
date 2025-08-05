@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGradient)"/>
+  
+  <!-- Chat bubble -->
+  <g transform="translate(256, 256)">
+    <!-- Main bubble -->
+    <path d="M-120 -96 Q-120 -144 -72 -144 L72 -144 Q120 -144 120 -96 L120 24 Q120 72 72 72 L24 72 L-24 120 L-24 72 L-72 72 Q-120 72 -120 24 Z" 
+          fill="white" opacity="0.95"/>
+    
+    <!-- Dots -->
+    <circle cx="-60" cy="-36" r="18" fill="url(#dotGradient)"/>
+    <circle cx="0" cy="-36" r="18" fill="url(#dotGradient)"/>
+    <circle cx="60" cy="-36" r="18" fill="url(#dotGradient)"/>
+  </g>
+  
+  <!-- Gradient definitions -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A78BFA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60A5FA;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

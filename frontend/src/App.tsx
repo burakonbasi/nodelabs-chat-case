@@ -40,19 +40,22 @@ function App() {
     // Check authentication
     checkAuth();
 
-    // Register service worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(
-          (registration) => {
-            console.log('SW registered:', registration);
-          },
-          (error) => {
-            console.log('SW registration failed:', error);
-          }
-        );
-      });
-    }
+    // Connect to socket
+    socketManager.connect();
+
+    // Register service worker for PWA - DISABLED FOR NOW
+    // if ('serviceWorker' in navigator) {
+    //   window.addEventListener('load', () => {
+    //     navigator.serviceWorker.register('/sw.js').then(
+    //       (registration) => {
+    //         console.log('SW registered:', registration);
+    //       },
+    //       (error) => {
+    //         console.log('SW registration failed:', error);
+    //       }
+    //     );
+    //   });
+    // }
   }, [checkAuth, initTheme]);
 
   useEffect(() => {

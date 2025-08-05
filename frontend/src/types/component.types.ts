@@ -1,4 +1,3 @@
-// src/types/component.types.ts
 import { ReactNode, CSSProperties, MouseEvent, KeyboardEvent, ChangeEvent } from 'react';
 import { Message, User, Conversation } from './index';
 

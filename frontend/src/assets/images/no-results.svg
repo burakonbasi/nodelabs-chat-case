@@ -1,0 +1,39 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="120" cy="120" r="80" fill="#F3F4F6" stroke="#E5E7EB" stroke-width="2" stroke-dasharray="5 5" opacity="0.5"/>
+  
+  <!-- Search icon -->
+  <g transform="translate(120, 110)">
+    <!-- Magnifying glass circle -->
+    <circle cx="0" cy="0" r="25" stroke="#9CA3AF" stroke-width="4" fill="none"/>
+    <!-- Handle -->
+    <line x1="17.5" y1="17.5" x2="30" y2="30" stroke="#9CA3AF" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- X mark inside magnifying glass -->
+    <line x1="-8" y1="-8" x2="8" y2="8" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+    <line x1="8" y1="-8" x2="-8" y2="8" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  
+  <!-- "No results" text -->
+  <text x="120" y="160" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#6B7280">No results found</text>
+  
+  <!-- Decorative elements -->
+  <g transform="translate(120, 120)">
+    <!-- Floating papers -->
+    <rect x="-60" y="-50" width="20" height="25" rx="2" fill="#E5E7EB" transform="rotate(-15 -50 -37.5)"/>
+    <rect x="40" y="-45" width="18" height="22" rx="2" fill="#D1D5DB" transform="rotate(20 49 -34)"/>
+    
+    <!-- Question marks -->
+    <text x="-40" y="50" font-family="Arial, sans-serif" font-size="18" fill="#D1D5DB">?</text>
+    <text x="30" y="45" font-family="Arial, sans-serif" font-size="14" fill="#E5E7EB">?</text>
+  </g>
+  
+  <!-- Small decorative circles -->
+  <circle cx="60" cy="60" r="3" fill="#D1D5DB"/>
+  <circle cx="180" cy="70" r="2" fill="#E5E7EB"/>
+  <circle cx="170" cy="170" r="4" fill="#D1D5DB"/>
+  <circle cx="70" cy="160" r="2" fill="#E5E7EB"/>
+  
+  <!-- Dotted line decoration -->
+  <path d="M 40 190 Q 120 170 200 190" stroke="#E5E7EB" stroke-width="2" fill="none" stroke-dasharray="3 3" opacity="0.5"/>
+</svg>

@@ -38,8 +38,8 @@ export function ChatWindow() {
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   
-  const { register, handleSubmit, reset, watch, setValue } = useForm<MessageForm>();
-  const messageContent = watch('content');
+  const { register, handleSubmit, reset, watch, setValue, getValues } = useForm<MessageForm>();
+  const [messageContent, setMessageContent] = useState('');
 
   // Sound effects
   const [playMessageSent] = useSound('/sounds/message-sent.mp3', { volume: 0.5 });
@@ -96,13 +96,16 @@ export function ChatWindow() {
   }, [messageContent, activeConversation, otherUser]);
 
   const onSubmit = async (data: MessageForm) => {
-    if (!data.content.trim() || !otherUser || typeof otherUser !== 'object') return;
+    if (!data.content || !data.content.trim() || !otherUser || typeof otherUser !== 'object') {
+      return;
+    }
 
     setIsSending(true);
     try {
       await sendMessage(otherUser._id, data.content.trim());
       playMessageSent();
       reset();
+      setMessageContent('');
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -112,7 +115,9 @@ export function ChatWindow() {
 
   const handleEmojiSelect = (emoji: string) => {
     const currentContent = messageContent || '';
-    setValue('content', currentContent + emoji);
+    const newContent = currentContent + emoji;
+    setMessageContent(newContent);
+    setValue('content', newContent);
     setShowEmojiPicker(false);
     messageInputRef.current?.focus();
   };
@@ -120,7 +125,10 @@ export function ChatWindow() {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(onSubmit)();
+      const currentContent = getValues('content');
+      if (currentContent && currentContent.trim()) {
+        onSubmit({ content: currentContent });
+      }
     }
   };
 
@@ -296,6 +304,11 @@ export function ChatWindow() {
               ref={messageInputRef}
               rows={1}
               placeholder="Type a message..."
+              value={messageContent}
+              onChange={(e) => {
+                setMessageContent(e.target.value);
+                setValue('content', e.target.value);
+              }}
               className={cn(
                 "w-full px-4 py-2.5 bg-gray-100 dark:bg-dark-300 rounded-lg resize-none",
                 "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
@@ -316,9 +329,15 @@ export function ChatWindow() {
             <FiSmile className="w-5 h-5" />
           </button>
 
-          {messageContent?.trim() ? (
+          {messageContent && messageContent.trim() ? (
             <motion.button
-              type="submit"
+              type="button"
+              onClick={() => {
+                const currentContent = getValues('content');
+                if (currentContent && currentContent.trim()) {
+                  onSubmit({ content: currentContent });
+                }
+              }}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               disabled={isSending}
@@ -332,14 +351,13 @@ export function ChatWindow() {
               <FiSend className="w-5 h-5" />
             </motion.button>
           ) : (
-            <VoiceRecorder 
-              isRecording={isRecording}
-              setIsRecording={setIsRecording}
-              onSend={(audioBlob) => {
-                console.log('Audio recorded:', audioBlob);
-                // Handle voice message
-              }}
-            />
+            <button
+              type="button"
+              onClick={() => setIsRecording(true)}
+              className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-300 rounded-lg transition-colors"
+            >
+              <FiMic className="w-5 h-5" />
+            </button>
           )}
         </div>
       </form>

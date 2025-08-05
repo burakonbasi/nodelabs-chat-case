@@ -1,0 +1,29 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="120" cy="120" r="80" fill="#F3F4F6" stroke="#E5E7EB" stroke-width="2"/>
+  
+  <!-- Chat bubbles -->
+  <rect x="80" y="85" width="80" height="30" rx="15" fill="#E5E7EB"/>
+  <rect x="70" y="125" width="100" height="30" rx="15" fill="#D1D5DB"/>
+  
+  <!-- Dots -->
+  <circle cx="95" cy="100" r="3" fill="#9CA3AF"/>
+  <circle cx="105" cy="100" r="3" fill="#9CA3AF"/>
+  <circle cx="115" cy="100" r="3" fill="#9CA3AF"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="60" cy="60" r="4" fill="#D1D5DB"/>
+  <circle cx="180" cy="70" r="3" fill="#E5E7EB"/>
+  <circle cx="170" cy="170" r="5" fill="#D1D5DB"/>
+  <circle cx="70" cy="160" r="3" fill="#E5E7EB"/>
+  
+  <!-- Plus signs -->
+  <g transform="translate(190, 90)">
+    <line x1="0" y1="5" x2="0" y2="-5" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-5" y1="0" x2="5" y2="0" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <g transform="translate(50, 90)">
+    <line x1="0" y1="4" x2="0" y2="-4" stroke="#E5E7EB" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-4" y1="0" x2="4" y2="0" stroke="#E5E7EB" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>
