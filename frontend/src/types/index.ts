@@ -8,15 +8,38 @@ export interface User {
     updatedAt: string;
   }
   
+  export interface Reaction {
+    emoji: string;
+    users: string[];
+  }
+  
+
   export interface Message {
     _id: string;
     conversationId: string;
     senderId: User | string;
     receiverId: User | string;
     content: string;
+    type?: 'text' | 'image' | 'video' | 'audio' | 'file';
+    media?: {
+      url: string;
+      type: string;
+      size: number;
+      name?: string;
+    };
     readAt?: string;
+    deliveredAt?: string;
     edited: boolean;
     editedAt?: string;
+    replyTo?: {
+      _id: string;
+      content: string;
+      senderId: string;
+    };
+    reactions?: Array<{
+      emoji: string;
+      users: string[];
+    }>;
     createdAt: string;
     updatedAt: string;
   }

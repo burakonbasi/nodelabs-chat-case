@@ -4,23 +4,27 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from '@/stores/authStore';
 import { useChatStore } from '@/stores/chatStore';
+import { useThemeStore } from '@/stores/themeStore';
 import { socketManager } from '@/lib/socket';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { ChatLayout } from '@/components/layout/ChatLayout';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const { initTheme } = useThemeStore();
   const {
     addMessage,
     setUserOnline,
@@ -30,8 +34,26 @@ function App() {
   } = useChatStore();
 
   useEffect(() => {
+    // Initialize theme
+    initTheme();
+    
+    // Check authentication
     checkAuth();
-  }, [checkAuth]);
+
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(
+          (registration) => {
+            console.log('SW registered:', registration);
+          },
+          (error) => {
+            console.log('SW registration failed:', error);
+          }
+        );
+      });
+    }
+  }, [checkAuth, initTheme]);
 
   useEffect(() => {
     // Socket event listeners
@@ -72,38 +94,83 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <ChatLayout />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route 
+              path="/login" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <LoginForm />
+                </motion.div>
+              } 
+            />
+            <Route 
+              path="/register" 
+              element={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <RegisterForm />
+                </motion.div>
+              } 
+            />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="h-screen"
+                  >
+                    <ChatLayout />
+                  </motion.div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
+        
         <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#363636',
-              color: '#fff',
+              background: 'var(--toast-bg)',
+              color: 'var(--toast-color)',
+              borderRadius: '0.5rem',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
             },
             success: {
               duration: 3000,
+              style: {
+                background: '#10b981',
+                color: '#fff',
+              },
               iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
+                primary: '#fff',
+                secondary: '#10b981',
               },
             },
             error: {
               duration: 4000,
+              style: {
+                background: '#ef4444',
+                color: '#fff',
+              },
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+                primary: '#fff',
+                secondary: '#ef4444',
               },
             },
           }}

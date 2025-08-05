@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { Conversation, Message } from '@/types';
-import api from '@/lib/api';
-import { socketManager } from '@/lib/socket';
+import type { Conversation, Message, Reaction } from '../types';
+import api from '../lib/api';
+import { socketManager } from '../lib/socket';
 
 interface ChatState {
   conversations: Conversation[];
@@ -27,6 +27,13 @@ interface ChatState {
   setUserOffline: (userId: string) => void;
   setUserTyping: (userId: string, conversationId: string) => void;
   setUserStoppedTyping: (userId: string, conversationId: string) => void;
+  
+  // Additional actions
+  addReaction: (messageId: string, emoji: string) => Promise<void>;
+  removeReaction: (messageId: string, emoji: string) => Promise<void>;
+  fetchOlderMessages: (conversationId: string) => Promise<void>;
+  updateMessage: (messageId: string, content: string) => Promise<void>;
+  deleteMessage: (messageId: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -173,5 +180,115 @@ export const useChatStore = create<ChatState>((set, get) => ({
       }
       return { typingUsers: newTypingUsers };
     });
+  },
+
+  addReaction: async (messageId, emoji) => {
+    try {
+      await api.post(`/messages/${messageId}/reactions`, { emoji });
+      
+      // Update local state
+      set((state) => ({
+        messages: state.messages.map(msg => {
+          if (msg._id === messageId) {
+            const existingReaction = msg.reactions?.find((r: Reaction) => r.emoji === emoji);
+            if (existingReaction) {
+              return {
+                ...msg,
+                reactions: msg.reactions?.map((r: Reaction) => 
+                  r.emoji === emoji 
+                    ? { ...r, users: [...r.users, 'current-user-id'] }
+                    : r
+                )
+              };
+            } else {
+              return {
+                ...msg,
+                reactions: [...(msg.reactions || []), { emoji, users: ['current-user-id'] }]
+              };
+            }
+          }
+          return msg;
+        })
+      }));
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+      throw error;
+    }
+  },
+
+  removeReaction: async (messageId, emoji) => {
+    try {
+      await api.delete(`/messages/${messageId}/reactions/${emoji}`);
+      
+      // Update local state
+      set((state) => ({
+        messages: state.messages.map(msg => {
+          if (msg._id === messageId) {
+            return {
+              ...msg,
+              reactions: msg.reactions?.map((r: Reaction) => 
+                r.emoji === emoji 
+                  ? { ...r, users: r.users.filter((id: string) => id !== 'current-user-id') }
+                  : r
+              ).filter((r: Reaction) => r.users.length > 0)
+            };
+          }
+          return msg;
+        })
+      }));
+    } catch (error) {
+      console.error('Error removing reaction:', error);
+      throw error;
+    }
+  },
+
+  fetchOlderMessages: async (conversationId) => {
+    const state = get();
+    if (state.isLoadingMessages || state.messages.length === 0) return;
+
+    try {
+      const oldestMessageId = state.messages[0]._id;
+      const response = await api.get(`/messages/conversations/${conversationId}/messages`, {
+        params: { before: oldestMessageId, limit: 20 }
+      });
+      
+      set((state) => ({
+        messages: [...response.data.data.messages, ...state.messages]
+      }));
+    } catch (error) {
+      console.error('Error fetching older messages:', error);
+    }
+  },
+
+  updateMessage: async (messageId, content) => {
+    try {
+      await api.patch(`/messages/${messageId}`, { content });
+      
+      // Update local state
+      set((state) => ({
+        messages: state.messages.map(msg => 
+          msg._id === messageId 
+            ? { ...msg, content, editedAt: new Date().toISOString() }
+            : msg
+        )
+      }));
+    } catch (error) {
+      console.error('Error updating message:', error);
+      throw error;
+    }
+  },
+
+  deleteMessage: async (messageId) => {
+    try {
+      await api.delete(`/messages/${messageId}`);
+      
+      // Update local state
+      set((state) => ({
+        messages: state.messages.filter(msg => msg._id !== messageId)
+      }));
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      throw error;
+    }
   },
 }));
