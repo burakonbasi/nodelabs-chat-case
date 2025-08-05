@@ -1,4 +1,3 @@
-// src/services/messageService.ts
 import api from '../lib/api';
 import { Message, MessageReaction, MessageStatus } from '../types';
 
