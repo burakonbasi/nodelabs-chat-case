@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'injection_container.dart' as di;
+import 'core/services/firebase_service.dart';
 import 'presentation/blocs/auth/auth_bloc.dart';
 import 'presentation/blocs/auth/auth_event.dart';
 import 'presentation/blocs/auth/auth_state.dart';
@@ -18,6 +19,9 @@ void main() async {
   
   // Initialize dependencies
   await di.init();
+  
+  // Initialize Firebase
+  await FirebaseService().initialize();
   
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([
